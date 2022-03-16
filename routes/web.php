@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,24 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/hello/{name}', function($name){
+    return "<h1>Hello $name!</h1>";
+})-> where ('name', '[A-Za-z]+');
+
+
+Route::prefix('/app')->group(function (){
+    Route::get('/', function(){
+        return "<h2>My App</h2>";
+    });
+
+    Route::get('/profile', function(){
+        return "<h2>My Profile</h2>";
+    });
+});
+
+Route::get('/product', [ProductController::class, 'index']);
+
+Route::get('product/add/{product}', [ProductController::class, 'add']);
+
+Route::get('/product/promotion', [ProductController::class, 'promotion']);
