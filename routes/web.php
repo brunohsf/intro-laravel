@@ -38,3 +38,7 @@ Route::get('/product', [ProductController::class, 'index']);
 Route::get('product/add/{product}', [ProductController::class, 'add']);
 
 Route::get('/product/promotion', [ProductController::class, 'promotion']);
+
+//-----------------------------------------------------------------------------//
+
+Route::resource('/client', ClientController::class);
