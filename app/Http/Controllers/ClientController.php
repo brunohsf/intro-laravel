@@ -3,9 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use stdClass;
 
 class ClientController extends Controller
 {
+
+    private $clients = [];
+
+    public function __construct()
+    {
+        $this->createClients();
+
+        if (!session('clients')) {
+            session(['clients' => $this->clients]);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -13,7 +26,7 @@ class ClientController extends Controller
      */
     public function index()
     {
-        //
+        return view('client.index')->with('clients', $this->clients);
     }
 
     /**
@@ -23,7 +36,7 @@ class ClientController extends Controller
      */
     public function create()
     {
-        //
+        return view('client.create');
     }
 
     /**
@@ -34,7 +47,25 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request);
+
+        $clients = session('clients');
+        $lastId = 0; 
+        if ($clients) { 
+            $lastIndex = count($clients) - 1;
+            $lastId = $clients[$lastIndex]->id;
+        }
+        $c = new stdClass; 
+        $c->id = $lastId + 1; 
+        //..get the data from request
+        $c->name = $request->input('name'); 
+        $c->city = $request->input('city'); 
+        $c->email = $request->input('email'); 
+        $clients[] = $c; 
+
+        session(['clients' => $clients]);
+
+        return view('client.index')->with('clients', $clients);
     }
 
     /**
@@ -80,5 +111,54 @@ class ClientController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    private function createClients()
+    {
+
+        $client = new stdClass;
+
+        $client->id = 1;
+        $client->name = 'Mikasa Ackerman';
+        $client->city = 'Paradis';
+        $client->email = 'mikasa@paradis.com';
+
+        $this->clients[] = $client;
+
+        $client = new stdClass;
+
+        $client->id = 2;
+        $client->name = 'Eren Yeager';
+        $client->city = 'Paradis';
+        $client->email = 'vomatatodomundo@paradis.com';
+
+        $this->clients[] = $client;
+    }
+
+    //..returns an object from an array
+    private function arrayFind($array, $id)
+    {
+        if ($array) {
+            foreach ($array as $obj) {
+                if ($obj->id == $id)
+                    return $obj;
+            }
+            return null;
+        }
+    }
+
+    //..return the index of an array in an object
+    private function arraySearch($array, $key, $search)
+    {
+        if ($array) {
+            $i = 0;
+            foreach ($array as $obj) {
+                if ($obj->$key == $search) {
+                    return $i;
+                }
+                $i++;
+            }
+            return -1;
+        }
     }
 }
