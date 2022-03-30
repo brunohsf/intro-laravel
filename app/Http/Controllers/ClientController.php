@@ -22,7 +22,12 @@ class ClientController extends Controller
      */
     public function index()
     {
-        return view('client.index')->with('clients', session('clients'));
+
+        $clients = Client::all();
+
+        return view('client.index')->with('clients', $clients);
+
+        // return view('client.index')->with('clients', session('clients'));
     }
 
     /**
