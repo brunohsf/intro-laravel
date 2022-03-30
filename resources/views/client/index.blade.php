@@ -19,9 +19,15 @@
                 <td>{{ $client->name }}</td>
                 <td>{{ $client->city }}</td>
                 <td>{{ $client->email }}</td>
-                <td><a href="{{ 'client.show', '$client->id' }}">Exibir</a></td>
-                <td><a href="{{ 'client.edit', '$client->id' }}">Editar</a></td>
-                {{-- <td><a href="{{ 'client.delete', '$client->id' }}">Excluir</a></td> --}}
+                <td><a href="{{ route('client.show', $client->id) }}">Exibir</a></td>
+                <td><a href="{{ route('client.edit', $client->id) }}">Editar</a></td>
+                <td>
+                    <form action="{{ route('client.destroy', $client->id) }}" method="post">
+                        @csrf
+                        @method('DELETE')
+                        <input type="submit" value="Excluir">
+                    </form>
+                </td>
             </tr>                
             @endforeach
         @else

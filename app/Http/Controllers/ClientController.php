@@ -11,12 +11,8 @@ class ClientController extends Controller
     private $clients = [];
 
     public function __construct()
-    {
-        $this->createClients();
-
-        if (!session('clients')) {
-            session(['clients' => $this->clients]);
-        }
+    {            
+        
     }
 
     /**
@@ -26,7 +22,7 @@ class ClientController extends Controller
      */
     public function index()
     {
-        return view('client.index')->with('clients', $this->clients);
+        return view('client.index')->with('clients', session('clients'));
     }
 
     /**
@@ -76,7 +72,19 @@ class ClientController extends Controller
      */
     public function show($id)
     {
-        //
+        $clients = session('clients');
+        
+        $obj = $this->arrayFind($clients, $id);
+
+        if ($obj) {
+
+            return view('client.show')->with('client', $obj);
+
+        }
+        else{
+            abort(404);
+        }
+
     }
 
     /**
@@ -87,7 +95,11 @@ class ClientController extends Controller
      */
     public function edit($id)
     {
-        //
+        $clients = session('clients');
+
+        $client = $this->arrayFind($clients, $id);
+
+        return view('client.edit')->with('client', $client);
     }
 
     /**
@@ -99,7 +111,18 @@ class ClientController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $clients = session('clients ');
+
+        $i = $this->arraySearch($clients, 'id', $id);
+
+        $clients[$i]->name = $request->input('name');
+        $clients[$i]->city = $request->input('city');
+        $clients[$i]->email = $request->input('email');
+
+        session(['clients' => $clients]);
+
+        return(redirect(route('client.index')));
+
     }
 
     /**
@@ -110,7 +133,17 @@ class ClientController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $clients = session('clients');
+
+        $i = $this->arraySearch($clients,'id', $id);
+
+        if($i >= 0){
+            unset($clients[$i]);
+            $clients = array_values($clients);
+            session(['clients' => $clients]);
+        }
+
+        return(redirect(route('client.index')));
     }
 
     private function createClients()
