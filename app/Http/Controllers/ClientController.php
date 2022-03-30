@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use Illuminate\Http\Request;
 use stdClass;
 
@@ -50,23 +51,15 @@ class ClientController extends Controller
     {
         // dd($request);
 
-        $clients = session('clients');
-        $lastId = 0; 
-        if ($clients) { 
-            $lastIndex = count($clients) - 1;
-            $lastId = $clients[$lastIndex]->id;
-        }
-        $c = new stdClass; 
-        $c->id = $lastId + 1; 
-        //..get the data from request
-        $c->name = $request->input('name'); 
-        $c->city = $request->input('city'); 
-        $c->email = $request->input('email'); 
-        $clients[] = $c; 
+        $client = new Client();
 
-        session(['clients' => $clients]);
+        $client->name = $request->input('name');
+        $client->city = $request->input('city');
+        $client->email = $request->input('email');
+        $client->save();
+        
 
-        return view('client.index')->with('clients', $clients);
+        return (redirect(route('client.index')));
     }
 
     /**
