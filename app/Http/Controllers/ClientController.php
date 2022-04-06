@@ -24,7 +24,7 @@ class ClientController extends Controller
     public function index()
     {
 
-        $clients = Client::all();
+        $clients = Client::orderBy('name')->get();
 
         return view('client.index')->with('clients', $clients);
 
@@ -70,19 +70,15 @@ class ClientController extends Controller
      */
     public function show($id)
     {
-        $clients = session('clients');
+        $client = Client::find($id);
         
-        $obj = $this->arrayFind($clients, $id);
-
-        if ($obj) {
-
-            return view('client.show')->with('client', $obj);
-
+        if($client){
+            return view('client.show')->with('client', $client);
         }
         else{
             abort(404);
         }
-
+       
     }
 
     /**
@@ -93,11 +89,14 @@ class ClientController extends Controller
      */
     public function edit($id)
     {
-        $clients = session('clients');
-
-        $client = $this->arrayFind($clients, $id);
-
-        return view('client.edit')->with('client', $client);
+        $client = Client::find($id);
+        
+        if($client){
+            return view('client.edit')->with('client', $client);
+        }
+        else{
+            abort(404);
+        }
     }
 
     /**
@@ -109,15 +108,13 @@ class ClientController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $clients = session('clients ');
+        $client = Client::find($id);
 
-        $i = $this->arraySearch($clients, 'id', $id);
+        $client->name = $request->input('name');
+        $client->city = $request->input('city');
+        $client->email = $request->input('email');
 
-        $clients[$i]->name = $request->input('name');
-        $clients[$i]->city = $request->input('city');
-        $clients[$i]->email = $request->input('email');
-
-        session(['clients' => $clients]);
+        $client->save();
 
         return(redirect(route('client.index')));
 
@@ -131,15 +128,11 @@ class ClientController extends Controller
      */
     public function destroy($id)
     {
-        $clients = session('clients');
+        // $client = Client::find($id);
 
-        $i = $this->arraySearch($clients,'id', $id);
+        // $client->delete();
 
-        if($i >= 0){
-            unset($clients[$i]);
-            $clients = array_values($clients);
-            session(['clients' => $clients]);
-        }
+        Client::destroy($id);
 
         return(redirect(route('client.index')));
     }
