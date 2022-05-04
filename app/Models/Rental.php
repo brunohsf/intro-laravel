@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Rental extends Model
 {
     use HasFactory;
+
+    protected $with = ['client', 'vehicle'];
+
+    public function client(){
+        return $this->belongsTo(Client::class);
+    }
+
+    public function vehicle(){
+        return $this->belongsTo(Vehicle::class);
+    }
 }
